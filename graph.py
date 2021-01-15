@@ -40,9 +40,11 @@ for gd in genre_data.values:
 for ac in actors_data.values:
     G.add_edge(ac[2], ac[0], relation='movie_actor')
 
+
 # Union Colors Algorithms
-UnionColors.run(G)
-# EnergySpreading.run(G)
+# UnionColors.run(G)
+M = G.copy()
+EnergySpreading.run(M)
 
 #
 # color_map = []

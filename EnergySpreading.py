@@ -1,13 +1,12 @@
 import networkx as nx
 from collections import deque
 
-
 def run(G):
     initial_nodes = ['RocknRolla', 'The League of Extraordinary Gentlemen', 'David Hemmings', 'Comedy']
 
     # Enqueue all initial nodes
     queue = deque([node for node in initial_nodes])
-    initial_energy = 1
+    initial_energy = 10
     initial_nodes.reverse()
 
     for node in initial_nodes:
@@ -35,11 +34,14 @@ def run(G):
         for neighbor in neighbors:
             if neighbor not in initial_nodes:
                 energy_parent = G.nodes[current]['energy'][0]
-                n = len(neighbors)
+                n = float(len(neighbors))
                 # When a node is visited its energy increases by value E = Ep/n
-
-                #TODO: create attribute energy for all nodes that dont belong to initial nodes
-                energy_neighbor = G.nodes[neighbor]['energy'][0] + (energy_parent/n)
-                nx.set_node_attributes(G, {neighbor: [energy_neighbor]}, 'energy')
+                neighbor_energy = 0
+                try:
+                    neighbor_energy = G.nodes[neighbor]['energy'][0]
+                except KeyError:
+                    pass
+                neighbor_energy = neighbor_energy + (energy_parent/n)
+                nx.set_node_attributes(G, {neighbor: [neighbor_energy]}, 'energy')
 
     print(recommendations)
