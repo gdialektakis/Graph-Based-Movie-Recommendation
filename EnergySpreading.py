@@ -20,7 +20,8 @@ def run(G):
     recommendations = []
     k = 10
     while len(queue) > 0 and k > 0:
-        current = queue.pop()
+        # take the first element of the queue
+        current = queue.popleft()
         current_attr = G.nodes(data=True)[current]
 
         if current_attr['node_type'] == 'movie' and \
@@ -29,14 +30,12 @@ def run(G):
             recommendations.append({current, current_attr['energy']})
             k -= 1
 
-        # TODO: change BFS so that neighbors are added into the queue and remember by which node they were visited
         # find all neighbors of current node using BFS
         successors = dict(nx.bfs_successors(G, current, 1))
         neighbors = successors[current]
         for neighbor in neighbors:
             if neighbor not in initial_nodes:
-                # TODO: check the following line
-                energy_parent = G.nodes[current]['energy'][0]
+                parent_energy = G.nodes[current]['energy'][0]
                 n = float(len(neighbors))
                 # When a node is visited its energy increases by value E = Ep/n
                 neighbor_energy = 0
@@ -44,11 +43,20 @@ def run(G):
                     neighbor_energy = G.nodes[neighbor]['energy'][0]
                 except KeyError:
                     pass
-                parents = []
-                neighbor_energy = neighbor_energy + (energy_parent/n)
+
+                neighbor_energy = neighbor_energy + (parent_energy/n)
                 nx.set_node_attributes(G, {neighbor: [neighbor_energy]}, 'energy')
+
+                # TODO: check BFS so that neighbors are added into the queue and the way parents are inserted
+                neighbor_attr = G.nodes(data=True)[neighbor]
+                parents = neighbor_attr['parents']
+                parents.append(current)
                 nx.set_node_attributes(G, {neighbor: [parents]}, 'parents')
+
+                if neighbor not in queue:
+                    queue.append(neighbor)
 
     # sort recommendations by their energy
     recommendations.sort(key=lambda x: x[1])
+    recommendations.reverse()
     print(recommendations)
