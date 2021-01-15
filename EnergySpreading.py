@@ -12,7 +12,7 @@ def run(G):
     # Enqueue all initial nodes
     queue = deque([node for node in initial_nodes])
     initial_energy = 10
-    # initial_nodes.reverse()
+    
 
     for node in initial_nodes:
         # Set the energy of each initial node to some constant
