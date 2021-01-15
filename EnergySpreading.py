@@ -9,7 +9,6 @@ def run(G):
         nx.set_node_attributes(G, {node: 0}, 'spread_energy')
         nx.set_node_attributes(G, {node: 0}, 'energy')
 
-
     # Enqueue all initial nodes
     queue = deque([node for node in initial_nodes])
     initial_energy = 10
@@ -53,7 +52,6 @@ def run(G):
                 if G.nodes(data=True)[neighbor]['spread_energy'] == 0:
                     nx.set_node_attributes(G, {neighbor: neighbor_energy}, 'spread_energy')
 
-                # TODO: check BFS so that neighbors are added into the queue and the way parents are inserted
                 neighbor_attr = G.nodes(data=True)[neighbor]
                 parents = neighbor_attr['parents']
                 parents.append(current)
