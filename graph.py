@@ -1,10 +1,10 @@
 from typing import Optional, Any
-
 import numpy as np
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import UnionColors
+import EnergySpreading
 
 
 # movies.csv
@@ -42,6 +42,7 @@ for ac in actors_data.values:
 
 # Union Colors Algorithms
 UnionColors.run(G)
+# EnergySpreading.run(G)
 
 #
 # color_map = []
