@@ -8,19 +8,19 @@ def run(G):
     # Enqueue all initial nodes
     queue = deque([node for node in initial_nodes])
     color = 1
-    initial_nodes.reverse()
     for node in initial_nodes:
         # Add color to the initial nodes
         # the key is 'node' (id of node)
         nx.set_node_attributes(G, {node: [color]}, 'colors')
         color += 1
 
+
     # Stop when you have K nodes (movie) that have all the colors
     recommendations = []
     k = 10
     while len(queue) > 0 and k > 0:
         # dequeue a node and visit it
-        current = queue.pop()
+        current = queue.popleft()
         current_attr = G.nodes(data=True)[current]
 
         if current_attr['node_type'] == 'movie' and \
@@ -28,6 +28,7 @@ def run(G):
                 current not in recommendations:
             recommendations.append(current)
             k -= 1
+
         successors = dict(nx.bfs_successors(G, current, 1))
         neighbors = successors[current]
         for neighbor in neighbors:

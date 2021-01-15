@@ -42,7 +42,8 @@ for ac in actors_data.values:
 
 
 # Union Colors Algorithms
-# UnionColors.run(G)
+H = G.copy()
+UnionColors.run(H)
 M = G.copy()
 EnergySpreading.run(M)
 
