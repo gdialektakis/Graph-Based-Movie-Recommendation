@@ -2,9 +2,8 @@ import networkx as nx
 from collections import deque
 
 
-def run(G):
-    initial_nodes = ['RocknRolla', 'The League of Extraordinary Gentlemen', 'David Hemmings', 'Comedy']
-
+def run(G, initial_nodes, top_k=10):
+    k = top_k
     # Enqueue all initial nodes
     queue = deque([node for node in initial_nodes])
     color = 1
@@ -14,10 +13,8 @@ def run(G):
         nx.set_node_attributes(G, {node: [color]}, 'colors')
         color += 1
 
-
     # Stop when you have K nodes (movie) that have all the colors
     recommendations = []
-    k = 10
     while len(queue) > 0 and k > 0:
         # dequeue a node and visit it
         current = queue.popleft()
@@ -25,7 +22,7 @@ def run(G):
 
         if current_attr['node_type'] == 'movie' and \
                 len(current_attr['colors']) == len(initial_nodes) and \
-                current not in recommendations:
+                current not in recommendations and current not in initial_nodes:
             recommendations.append(current)
             k -= 1
 
@@ -42,4 +39,4 @@ def run(G):
                     colors.reverse()
                     nx.set_node_attributes(G, {neighbor: colors}, 'colors')
 
-    print(recommendations)
+    return recommendations

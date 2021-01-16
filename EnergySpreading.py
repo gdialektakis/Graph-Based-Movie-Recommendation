@@ -1,8 +1,9 @@
 import networkx as nx
 from collections import deque
 
-def run(G):
-    initial_nodes = ['RocknRolla', 'The League of Extraordinary Gentlemen', 'David Hemmings', 'Comedy']
+
+def run(G, initial_nodes, top_k=10):
+    k = top_k
 
     for node in G.nodes:
         nx.set_node_attributes(G, {node: []}, 'parents')
@@ -12,7 +13,6 @@ def run(G):
     # Enqueue all initial nodes
     queue = deque([node for node in initial_nodes])
     initial_energy = 10
-    
 
     for node in initial_nodes:
         # Set the energy of each initial node to some constant
@@ -20,7 +20,6 @@ def run(G):
         nx.set_node_attributes(G, {node: initial_energy}, 'spread_energy')
 
     recommendations = []
-    k = 10
     while len(queue) > 0 and k > 0:
         # take the first element of the queue
         current = queue.popleft()
@@ -28,7 +27,7 @@ def run(G):
 
         if current_attr['node_type'] == 'movie' and \
                 len(current_attr['parents']) == len(initial_nodes) and \
-                current not in recommendations:
+                current not in recommendations and current not in initial_nodes:
             recommendations.append([current, current_attr['energy']])
             k -= 1
 
@@ -63,4 +62,4 @@ def run(G):
     # sort recommendations by their energy
     recommendations.sort(key=lambda x: x[1])
     recommendations.reverse()
-    print(recommendations)
+    return recommendations

@@ -2,6 +2,9 @@ import pandas as pd
 import networkx as nx
 import UnionColors
 import EnergySpreading
+import random
+import evaluation
+
 
 #user movie ratings
 user_rating_data = pd.read_csv('user_ratings.csv', delimiter=';')
@@ -35,10 +38,6 @@ U.add_nodes_from(user_rating_data.title, node_type='movie')
 for umr in user_rating_data.values:
     U.add_edge(umr[0], umr[2], relation='rated', weight=umr[1])
 
-# for edge in U.edges(data=True):
-#     print(edge)
-
-
 genre_data['edge'] = pd.Series(1, index=genre_data.index)
 genre_data.reset_index(drop=True)
 
@@ -55,13 +54,45 @@ for gd in genre_data.values:
 for ac in actors_data.values:
     G.add_edge(ac[2], ac[0], relation='movie_actor')
 
+user_id = 78
+genre_to_watch = 'Comedy'
+movie_list = []
 
+for u, m in U.edges([user_id]):
+    watchable = False
+    movie_rating = U[u][m]['weight']
+    for m1, g in G.edges([m]):
+        if g == genre_to_watch:
+            watchable = True
+            break
+    if watchable:
+        movie_list.append(m)
+
+initial_movies, hidden_movies = evaluation.split(movie_list)
 # Union Colors Algorithms
 H = G.copy()
-UnionColors.run(H)
-M = G.copy()
-EnergySpreading.run(M)
+union_reccomendations = UnionColors.run(H, initial_movies, len(hidden_movies))
+print("\nUnion Colors Algorithm")
+print(union_reccomendations)
+y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, union_reccomendations)
+accuracy, precision, recall, f1_score = evaluation.get_metrics(y_actual, y_predicted)
+print("Accuracy: %.4f " % accuracy)
+print("Precision: %.4f " % precision)
+print("Recall: %.4f " % recall)
+print("F1 Score: %.4f " % f1_score)
 
+
+M = G.copy()
+energy_recommendations = EnergySpreading.run(M, initial_movies, len(hidden_movies))
+print("\nEnergy Spreading Algorithm")
+print(energy_recommendations)
+energy_recommendations = [rec[0] for rec in energy_recommendations]
+y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, energy_recommendations)
+accuracy, precision, recall, f1_score = evaluation.get_metrics(y_actual, y_predicted)
+print("Accuracy: %.4f " % accuracy)
+print("Precision: %.4f " % precision)
+print("Recall: %.4f " % recall)
+print("F1 Score: %.4f " % f1_score)
 #
 # color_map = []
 # for node in G.nodes(data=True):
