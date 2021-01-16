@@ -1,5 +1,5 @@
 import random
-
+from sklearn.metrics import mean_squared_error
 
 def confusion_matrix(y_actual, y_predicted):
     TP = 0
@@ -26,7 +26,9 @@ def get_metrics(y_actual, y_predicted):
     precision = TP / (TP + FP)
     recall = TP / (TP + FN)
     f1_score = 2 * (recall * precision) / (recall + precision)
-    return accuracy, precision, recall, f1_score
+    rmse = mean_squared_error(y_actual, y_predicted, squared=False)
+    rms = mean_squared_error(y_actual, y_predicted)
+    return accuracy, precision, recall, f1_score, rmse, rms
 
 
 def get_labels(U, user_id, test_movies, recommendations):
@@ -56,7 +58,7 @@ def get_labels(U, user_id, test_movies, recommendations):
 def split(movie_list):
     random.seed(42)
     # split_ratio = min(int(len(movie_list) * 0.99), len(movie_list) - 2)
-    split_ratio = 5
+    split_ratio = 3
     initial_movies = random.sample(movie_list, split_ratio)
     hidden_movies = []
     for m in movie_list:

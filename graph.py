@@ -80,11 +80,13 @@ print("Movies recommended: %s" % union_reccomendations)
 
 
 y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, union_reccomendations)
-accuracy, precision, recall, f1_score = evaluation.get_metrics(y_actual, y_predicted)
+accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
 print("Accuracy: %.4f " % accuracy)
 print("Precision: %.4f " % precision)
 print("Recall: %.4f " % recall)
 print("F1 Score: %.4f " % f1_score)
+print("RMSE: %.4f " % rmse)
+print("RMS: %.4f " % rms)
 
 
 M = G.copy()
@@ -98,11 +100,13 @@ print("Movies recommended: %s" % energy_recommendations)
 
 energy_recommendations = [rec[0] for rec in energy_recommendations]
 y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, energy_recommendations)
-accuracy, precision, recall, f1_score = evaluation.get_metrics(y_actual, y_predicted)
+accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
 print("Accuracy: %.4f " % accuracy)
 print("Precision: %.4f " % precision)
 print("Recall: %.4f " % recall)
 print("F1 Score: %.4f " % f1_score)
+print("RMSE: %.4f " % rmse)
+print("RMS: %.4f " % rms)
 
 #
 # color_map = []
