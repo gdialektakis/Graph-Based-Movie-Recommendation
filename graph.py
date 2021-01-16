@@ -2,9 +2,8 @@ import pandas as pd
 import networkx as nx
 import UnionColors
 import EnergySpreading
-import random
 import evaluation
-
+import time
 
 #user movie ratings
 user_rating_data = pd.read_csv('user_ratings.csv', delimiter=';')
@@ -71,9 +70,15 @@ for u, m in U.edges([user_id]):
 initial_movies, hidden_movies = evaluation.split(movie_list)
 # Union Colors Algorithms
 H = G.copy()
+start_time = time.time()
 union_reccomendations = UnionColors.run(H, initial_movies, len(hidden_movies))
-print("\nUnion Colors Algorithm")
-print(union_reccomendations)
+finish_time = time.time()
+
+print("\n-----------------Union Colors Algorithm-----------------")
+print("Execution time %.2f seconds" % (finish_time-start_time))
+print("Movies recommended: %s" % union_reccomendations)
+
+
 y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, union_reccomendations)
 accuracy, precision, recall, f1_score = evaluation.get_metrics(y_actual, y_predicted)
 print("Accuracy: %.4f " % accuracy)
@@ -83,9 +88,14 @@ print("F1 Score: %.4f " % f1_score)
 
 
 M = G.copy()
+start_time = time.time()
 energy_recommendations = EnergySpreading.run(M, initial_movies, len(hidden_movies))
-print("\nEnergy Spreading Algorithm")
-print(energy_recommendations)
+finish_time = time.time()
+
+print("\n-----------------Energy Spreading Algorithm-----------------")
+print("Execution time %.2f seconds" % (finish_time-start_time))
+print("Movies recommended: %s" % energy_recommendations)
+
 energy_recommendations = [rec[0] for rec in energy_recommendations]
 y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, energy_recommendations)
 accuracy, precision, recall, f1_score = evaluation.get_metrics(y_actual, y_predicted)
@@ -93,6 +103,7 @@ print("Accuracy: %.4f " % accuracy)
 print("Precision: %.4f " % precision)
 print("Recall: %.4f " % recall)
 print("F1 Score: %.4f " % f1_score)
+
 #
 # color_map = []
 # for node in G.nodes(data=True):
