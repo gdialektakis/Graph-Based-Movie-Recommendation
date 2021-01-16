@@ -22,9 +22,10 @@ def confusion_matrix(y_actual, y_predicted):
 
 def get_metrics(y_actual, y_predicted):
     TP, FP, TN, FN = confusion_matrix(y_actual, y_predicted)
-    accuracy = (TP + TN) / (TP + FP + FN + TN)
-    precision = TP / (TP + FP)
-    recall = TP / (TP + FN)
+    accuracy = float(TP + TN) / float(TP + FP + FN + TN)
+    precision = float(TP) / float(TP + FP)
+    recall = float(TP) / float(TP + FN)
+    print(recall, precision, precision)
     f1_score = 2 * (recall * precision) / (recall + precision)
     rmse = mean_squared_error(y_actual, y_predicted, squared=False)
     rms = mean_squared_error(y_actual, y_predicted)
@@ -55,10 +56,10 @@ def get_labels(U, user_id, test_movies, recommendations):
     return y_actual, y_predicted
 
 
-def split(movie_list):
+def split(movie_list, ratio):
     random.seed(42)
     # split_ratio = min(int(len(movie_list) * 0.99), len(movie_list) - 2)
-    split_ratio = 3
+    split_ratio = ratio
     initial_movies = random.sample(movie_list, split_ratio)
     hidden_movies = []
     for m in movie_list:
