@@ -1,11 +1,11 @@
-from typing import Optional, Any
-import numpy as np
 import pandas as pd
 import networkx as nx
-import matplotlib.pyplot as plt
 import UnionColors
 import EnergySpreading
 
+#user movie ratings
+user_rating_data = pd.read_csv('user_ratings.csv', delimiter=';')
+user_rating_data = user_rating_data[['userID', 'movieID', 'rating']]
 
 # movies.csv
 movies_data = pd.read_csv('movies.csv', delimiter=';')
@@ -23,6 +23,21 @@ genre_data = genre_data.merge(movies_data, on="movieID", how="inner")
 actors_data = actors_data.merge(movies_data, on="movieID", how="inner")
 genre_data.drop(['movieID'], axis=1, inplace=True)
 actors_data.drop(['movieID'], axis=1, inplace=True)
+
+# Add movieTitle on user movie ratings
+user_rating_data = user_rating_data.merge(movies_data, on="movieID", how="inner")
+user_rating_data.drop(['movieID'], axis=1, inplace=True)
+
+# Create user movie rating graph
+U = nx.Graph()
+U.add_nodes_from(user_rating_data.userID, node_type='user')
+U.add_nodes_from(user_rating_data.title, node_type='movie')
+for umr in user_rating_data.values:
+    U.add_edge(umr[0], umr[2], relation='rated', weight=umr[1])
+
+# for edge in U.edges(data=True):
+#     print(edge)
+
 
 genre_data['edge'] = pd.Series(1, index=genre_data.index)
 genre_data.reset_index(drop=True)
