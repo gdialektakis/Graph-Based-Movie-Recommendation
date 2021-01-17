@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-server_app = True
+server_app = False
 
 @app.route('/EnergySpreading', methods=['GET'])
 def fetchEnergySpreading():
@@ -57,21 +57,21 @@ if __name__ == '__main__':
 
         if int(val) == 0:
             try:
-                data = graph.graph(0, 78, 'Comedy', 2)
+                data = graph.graph(0, 127, 'Comedy', 2)
                 print(data)
             except:
                 print("error")
         elif int(val) == 1:
             try:
-                data = graph.graph(1, 78, 'Comedy', 2)
+                data = graph.graph(1, 78, 'Comedy', 3)
                 print(data)
             except:
                 print("error")
         else:
             try:
-                data = graph.graph(0, 78, 'Comedy', 2)
+                data = graph.graph(0, 127, 'Comedy', 2)
                 print(data)
-                data = graph.graph(1, 78, 'Comedy', 2)
+                data = graph.graph(1, 127, 'Comedy', 2)
                 print(data)
             except:
                 print("error")

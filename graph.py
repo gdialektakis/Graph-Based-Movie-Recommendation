@@ -86,7 +86,7 @@ def graph(index, user_id, category, ratio):
         print("Movies recommended: %s" % union_reccomendations)
 
 
-        y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, union_reccomendations)
+        y_actual, y_predicted = evaluation.get_labels(G, U, user_id, hidden_movies, union_reccomendations, category)
         accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
         print("Accuracy: %.4f " % accuracy)
         print("Precision: %.4f " % precision)
@@ -117,7 +117,7 @@ def graph(index, user_id, category, ratio):
         print("Movies recommended: %s" % energy_recommendations)
 
         energy_recommendations = [rec[0] for rec in energy_recommendations]
-        y_actual, y_predicted = evaluation.get_labels(U, user_id, hidden_movies, energy_recommendations)
+        y_actual, y_predicted = evaluation.get_labels(G, U, user_id, hidden_movies, energy_recommendations, category)
         accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
         print("Accuracy: %.4f " % accuracy)
         print("Precision: %.4f " % precision)

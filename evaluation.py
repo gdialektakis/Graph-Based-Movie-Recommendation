@@ -32,11 +32,11 @@ def get_metrics(y_actual, y_predicted):
     return accuracy, precision, recall, f1_score, rmse, rms
 
 
-def get_labels(U, user_id, test_movies, recommendations):
+def get_labels(G, U, user_id, test_movies, recommendations, category):
     y_actual = []
     for movie in test_movies:
         movie_rating = U[user_id][movie]['weight']
-        if movie_rating < 4.5:
+        if movie_rating < 3.5:
             y_actual.append(0)
         else:
             y_actual.append(1)
@@ -45,14 +45,25 @@ def get_labels(U, user_id, test_movies, recommendations):
 
     for movie in recommendations:
         if movie not in test_movies:
-            y_actual.append(0)
+            y_actual_value = 0
+            if G.has_edge(movie, category):
+                avg_rating = 0
+                rating_count = 0
+                for u, m in U.edges([movie]):
+                    movie_rating = U[u][m]['weight']
+                    avg_rating += movie_rating
+                    rating_count += 1
+                if rating_count > 0:
+                    avg_rating = avg_rating / rating_count
+                if avg_rating > 3.5:
+                    y_actual_value = 1
+            y_actual.append(y_actual_value)
             y_predicted.append(1)
 
     for i in range(len(test_movies)):
         current_test = test_movies[i]
         if current_test in recommendations:
             y_predicted[i] = 1
-
     return y_actual, y_predicted
 
 
