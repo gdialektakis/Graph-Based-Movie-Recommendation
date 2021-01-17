@@ -8,6 +8,7 @@ import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
+server_app = True
 
 @app.route('/EnergySpreading', methods=['GET'])
 def fetchEnergySpreading():
@@ -47,4 +48,30 @@ def fetchUserId():
     return jsonify(data_list)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, use_reloader=False)
+    if server_app:
+        app.run(host='0.0.0.0', port=5000, use_reloader=False)
+    else:
+        print("Choose the algorithm you want to provide you recommendation movies?")
+        print("Press 0 for UnionColors or Press 1 for EnergySpreading OR Press 2 for running both algorithms")
+        val = input("Enter your value: ")
+
+        if int(val) == 0:
+            try:
+                data = graph.graph(0, 78, 'Comedy', 2)
+                print(data)
+            except:
+                print("error")
+        elif int(val) == 1:
+            try:
+                data = graph.graph(1, 78, 'Comedy', 2)
+                print(data)
+            except:
+                print("error")
+        else:
+            try:
+                data = graph.graph(0, 78, 'Comedy', 2)
+                print(data)
+                data = graph.graph(1, 78, 'Comedy', 2)
+                print(data)
+            except:
+                print("error")
