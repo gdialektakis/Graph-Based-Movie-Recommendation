@@ -1,7 +1,12 @@
 import random
 from sklearn.metrics import mean_squared_error
 
+
 def confusion_matrix(y_actual, y_predicted):
+    """ This method finds the number of True Positives, False Positives,
+    True Negatives and False Negative between the hidden movies
+    and those predicted by the recommendation algorithm
+    """
     TP = 0
     FP = 0
     TN = 0
@@ -9,18 +14,20 @@ def confusion_matrix(y_actual, y_predicted):
 
     for i in range(len(y_predicted)):
         if y_actual[i] == y_predicted[i] == 1:
-           TP += 1
+            TP += 1
         if y_predicted[i] == 1 and y_actual[i] != y_predicted[i]:
-           FP += 1
+            FP += 1
         if y_actual[i] == y_predicted[i] == 0:
-           TN += 1
+            TN += 1
         if y_predicted[i] == 0 and y_actual[i] != y_predicted[i]:
-           FN += 1
+            FN += 1
 
     return TP, FP, TN, FN
 
 
 def get_metrics(y_actual, y_predicted):
+    """ This method computes the evaluation metrics using the above function
+        """
     TP, FP, TN, FN = confusion_matrix(y_actual, y_predicted)
     accuracy = float(TP + TN) / float(TP + FP + FN + TN)
     precision = float(TP) / float(TP + FP)
@@ -33,9 +40,13 @@ def get_metrics(y_actual, y_predicted):
 
 
 def get_labels(G, U, user_id, test_movies, recommendations, category):
+    """ This method finds the correct label (0 or 1) of the hidden movies
+    and those recommended by the algorithm and stores it into y_actual and y_predicted, respectively.
+    """
     y_actual = []
     for movie in test_movies:
         movie_rating = U[user_id][movie]['weight']
+        # split the movies into 2 categories, those above 3.5 rating and those below 3.5
         if movie_rating < 3.5:
             y_actual.append(0)
         else:
@@ -68,8 +79,10 @@ def get_labels(G, U, user_id, test_movies, recommendations, category):
 
 
 def split(movie_list, ratio):
+    """ This method selects randomly a number of movies
+    to be given as initial nodes to the recommendation algorithms
+    """
     random.seed(42)
-    # split_ratio = min(int(len(movie_list) * 0.99), len(movie_list) - 2)
     split_ratio = ratio
     initial_movies = random.sample(movie_list, split_ratio)
     hidden_movies = []

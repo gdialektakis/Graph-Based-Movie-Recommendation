@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import networkx as nx
 import UnionColors
 import EnergySpreading
@@ -8,24 +7,25 @@ import time
 
 def graph(index, user_id, category, ratio):
 
-    #user movie ratings
+    # user movie ratings
     user_rating_data = pd.read_csv('user_ratings.csv', delimiter=';')
     user_rating_data = user_rating_data[['userID', 'movieID', 'rating']]
 
-    # movies.csv
+    # movies
     movies_data = pd.read_csv('movies.csv', delimiter=';')
     movies_data = movies_data[['movieID', 'title']]
 
-    # movie_actors.csv
+    # movie_actors
     actors_data = pd.read_csv('movie_actors.csv', delimiter=',')
     actors_data = actors_data[['actorName', 'movieID', 'ranking']]
 
-    # movie_genres.csv
+    # movie_genres
     genre_data = pd.read_csv('movie_genres.csv', delimiter=',')
     genre_data = genre_data[['movieID', 'genre']]
 
     genre_data = genre_data.merge(movies_data, on="movieID", how="inner")
     actors_data = actors_data.merge(movies_data, on="movieID", how="inner")
+    # drop movieID from genre and actors as we won't need it
     genre_data.drop(['movieID'], axis=1, inplace=True)
     actors_data.drop(['movieID'], axis=1, inplace=True)
 
@@ -45,7 +45,7 @@ def graph(index, user_id, category, ratio):
 
     # Create a graph
     G = nx.Graph()
-    # Add nodes
+    # Add actor, movie and genre nodes
     G.add_nodes_from(actors_data.actorName, node_type='actor', colors=[])
     G.add_nodes_from(movies_data.title, node_type='movie', colors=[])
     G.add_nodes_from(genre_data.genre, node_type='genre', colors=[])
@@ -59,34 +59,32 @@ def graph(index, user_id, category, ratio):
     user_id = user_id
     genre_to_watch = category
 
-
     movie_list = []
 
     for u, m in U.edges([user_id]):
         watchable = False
-        movie_rating = U[u][m]['weight']
         for m1, g in G.edges([m]):
             if g == genre_to_watch:
                 watchable = True
                 break
         if watchable:
             movie_list.append(m)
-
+    # get the initial movies and the hidden ones
     initial_movies, hidden_movies = evaluation.split(movie_list, ratio)
 
     if index == 0:
         # Union Colors Algorithms
         H = G.copy()
         start_time = time.time()
-        union_reccomendations = UnionColors.run(H, initial_movies, len(hidden_movies))
+        union_recommendations = UnionColors.run(H, initial_movies, len(hidden_movies))
         finish_time = time.time()
 
         print("\n-----------------Union Colors Algorithm-----------------")
         print("Execution time %.2f seconds" % (finish_time-start_time))
-        print("Movies recommended: %s" % union_reccomendations)
+        print("Movies recommended: %s" % union_recommendations)
 
 
-        y_actual, y_predicted = evaluation.get_labels(G, U, user_id, hidden_movies, union_reccomendations, category)
+        y_actual, y_predicted = evaluation.get_labels(G, U, user_id, hidden_movies, union_recommendations, category)
         accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
         print("Accuracy: %.4f " % accuracy)
         print("Precision: %.4f " % precision)
@@ -95,18 +93,20 @@ def graph(index, user_id, category, ratio):
         print("RMSE: %.4f " % rmse)
         print("RMS: %.4f " % rms)
 
-        data = {
-            'time' :  (finish_time-start_time),
-            'movies' : union_reccomendations,
-            'accurancy' : accuracy,
-            'precision' : precision,
-            'recall' : recall,
-            'f1_score' : f1_score,
-            'rmsa' : rmse,
-            'rms' : rms
+        results = {
+            'time':  (finish_time-start_time),
+            'movies': union_recommendations,
+            'accurancy': accuracy,
+            'precision': precision,
+            'recall': recall,
+            'f1_score': f1_score,
+            'rmse': rmse,
+            'rms': rms
         }
-        return data
+        return results
+
     else:
+
         M = G.copy()
         start_time = time.time()
         energy_recommendations = EnergySpreading.run(M, initial_movies, len(hidden_movies))
@@ -116,7 +116,9 @@ def graph(index, user_id, category, ratio):
         print("Execution time %.2f seconds" % (finish_time-start_time))
         print("Movies recommended: %s" % energy_recommendations)
 
+        # obtain only the movie without its energy
         energy_recommendations = [rec[0] for rec in energy_recommendations]
+
         y_actual, y_predicted = evaluation.get_labels(G, U, user_id, hidden_movies, energy_recommendations, category)
         accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
         print("Accuracy: %.4f " % accuracy)
@@ -126,14 +128,14 @@ def graph(index, user_id, category, ratio):
         print("RMSE: %.4f " % rmse)
         print("RMS: %.4f " % rms)
 
-        data = {
-            'time' :  (finish_time-start_time),
-            'movies' : energy_recommendations,
-            'accurancy' : accuracy,
-            'precision' : precision,
-            'recall' : recall,
-            'f1_score' : f1_score,
-            'rmsa' : rmse,
-            'rms' : rms
+        results = {
+            'time':  (finish_time-start_time),
+            'movies': energy_recommendations,
+            'accurancy': accuracy,
+            'precision': precision,
+            'recall': recall,
+            'f1_score': f1_score,
+            'rmse': rmse,
+            'rms': rms
         }
-        return data
+        return results
