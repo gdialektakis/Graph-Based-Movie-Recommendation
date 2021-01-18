@@ -50,6 +50,7 @@ def graph(index, user_id, category, ratio):
     G.add_nodes_from(movies_data.title, node_type='movie', colors=[])
     G.add_nodes_from(genre_data.genre, node_type='genre', colors=[])
 
+    # add edges
     for gd in genre_data.values:
         G.add_edge(gd[1], gd[0], relation='movie_genre')
 
@@ -96,7 +97,7 @@ def graph(index, user_id, category, ratio):
         results = {
             'time':  (finish_time-start_time),
             'movies': union_recommendations,
-            'accurancy': accuracy,
+            'accuracy': accuracy,
             'precision': precision,
             'recall': recall,
             'f1_score': f1_score,
@@ -131,7 +132,7 @@ def graph(index, user_id, category, ratio):
         results = {
             'time':  (finish_time-start_time),
             'movies': energy_recommendations,
-            'accurancy': accuracy,
+            'accuracy': accuracy,
             'precision': precision,
             'recall': recall,
             'f1_score': f1_score,
