@@ -86,7 +86,6 @@ def split(U, movie_list, ratio, user_id):
     split_ratio = ratio
     best_rated_movies = []
     for m in movie_list:
-        print(U[user_id][m]['weight'])
         if U[user_id][m]['weight'] > 3.0:
             best_rated_movies.append(m)
 
@@ -96,3 +95,67 @@ def split(U, movie_list, ratio, user_id):
         if m not in initial_movies:
             hidden_movies.append(m)
     return initial_movies, hidden_movies
+
+
+def get_statistics(nx, G, U):
+    """ This method prints various stats about the data and the graphs
+    """
+    print("=====================================")
+    print("Stats about the data")
+    print("=====================================")
+
+    print(nx.info(G))
+    print()
+    movie_genre_total = 0
+    movie_actor_total = 0
+    for n in G.edges(data=True):
+        rel = n[2]['relation']
+        if rel == 'movie_actor':
+            movie_actor_total += 1
+        if rel == 'movie_genre':
+            movie_genre_total += 1
+
+    actors_total = 0
+    genres_total = 0
+    movies_total = 0
+    for n in G.nodes(data=True):
+        n_type = n[1]['node_type']
+        if n_type == 'genre':
+            genres_total += 1
+        elif n_type == 'movie':
+            movies_total += 1
+        elif n_type == 'actor':
+            actors_total += 1
+    print('Total actors: ' + str(actors_total))
+    print('Total genres: ' + str(genres_total))
+    print('Total movies: ' + str(movies_total))
+    print('Total Movie -> Actor Edges: ' + str(movie_actor_total))
+    print('Total Movie -> Genre Edges: ' + str(movie_genre_total))
+    print()
+    total_ratings = 0
+    count_per_rating = {}
+    for n in U.edges(data=True):
+        rating = n[2]['weight']
+        if rating in count_per_rating:
+            count_per_rating[rating] += 1
+        else:
+            count_per_rating[rating] = 1
+        total_ratings += 1
+    rating_dict = {}
+    for i in range(1, 11):
+        rating_dict[i*0.5] = count_per_rating[i*0.5]
+    print('# of ratings per star')
+    print(rating_dict)
+    print()
+    u_movie_total = 0
+    u_user_total = 0
+    for n in U.nodes(data=True):
+        node_type = n[1]['node_type']
+        if node_type == 'movie':
+            u_movie_total += 1
+        elif node_type == 'user':
+            u_user_total += 1
+
+    print('Total users: ' + str(u_user_total))
+    print('Total Rated Movies: ' + str(u_movie_total))
+    print("=====================================")
