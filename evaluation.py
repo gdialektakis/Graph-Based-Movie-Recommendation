@@ -78,13 +78,19 @@ def get_labels(G, U, user_id, test_movies, recommendations, category):
     return y_actual, y_predicted
 
 
-def split(movie_list, ratio):
+def split(U, movie_list, ratio, user_id):
     """ This method selects randomly a number of movies
     to be given as initial nodes to the recommendation algorithms
     """
     random.seed(42)
     split_ratio = ratio
-    initial_movies = random.sample(movie_list, split_ratio)
+    best_rated_movies = []
+    for m in movie_list:
+        print(U[user_id][m]['weight'])
+        if U[user_id][m]['weight'] > 3.0:
+            best_rated_movies.append(m)
+
+    initial_movies = random.sample(best_rated_movies, split_ratio)
     hidden_movies = []
     for m in movie_list:
         if m not in initial_movies:

@@ -64,14 +64,15 @@ def graph(index, user_id, category, ratio):
 
     for u, m in U.edges([user_id]):
         watchable = False
+        rating = U[u][m]['weight']
         for m1, g in G.edges([m]):
-            if g == genre_to_watch:
+            if g == genre_to_watch and rating > 3:
                 watchable = True
                 break
         if watchable:
             movie_list.append(m)
     # get the initial movies and the hidden ones
-    initial_movies, hidden_movies = evaluation.split(movie_list, ratio)
+    initial_movies, hidden_movies = evaluation.split(U, movie_list, ratio, user_id)
 
     if index == 0:
         # Union Colors Algorithms
