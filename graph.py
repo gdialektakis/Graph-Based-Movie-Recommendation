@@ -63,6 +63,8 @@ def graph(index, user_id, category, ratio):
     user_id = user_id
     genre_to_watch = category
 
+    # Get statistics about the data
+    evaluation.get_statistics(nx, G, U)
     movie_list = []
 
     for u, m in U.edges([user_id]):
