@@ -5,6 +5,9 @@ import EnergySpreading
 import evaluation
 import time
 
+def getKey(item):
+    return item[1]
+
 def graph(index, user_id, category, ratio):
 
     # user movie ratings
@@ -66,7 +69,7 @@ def graph(index, user_id, category, ratio):
         watchable = False
         rating = U[u][m]['weight']
         for m1, g in G.edges([m]):
-            if g == genre_to_watch and rating > 3:
+            if g == genre_to_watch:
                 watchable = True
                 break
         if watchable:
@@ -74,13 +77,33 @@ def graph(index, user_id, category, ratio):
     # get the initial movies and the hidden ones
     initial_movies, hidden_movies = evaluation.split(U, movie_list, ratio, user_id)
 
+
     if index == 0:
         # Union Colors Algorithms
         H = G.copy()
         start_time = time.time()
         union_recommendations = UnionColors.run(H, initial_movies, len(hidden_movies))
-        finish_time = time.time()
 
+        recommended_movies = []
+        for movie in union_recommendations:
+            if movie in hidden_movies:
+                recommended_movies.append(movie)   
+
+        ground_truth = []
+        for movie in recommended_movies:
+            try:
+                rating = U[user_id][movie]['weight']
+                ground_truth.append([movie, rating])
+            except KeyError:
+                pass
+        ground_truth.sort(key=getKey, reverse=True)
+
+
+        recommended_movies = [int(movies_data.loc[movies_data['title'] == item].iloc[0]['movieID']) for item in  recommended_movies]
+        ground_truth = [int(movies_data.loc[movies_data['title'] == item[0]].iloc[0]['movieID']) for item in  ground_truth]
+        ndcg_score = evaluation.ndcg_metric(ground_truth, recommended_movies)
+
+        finish_time = time.time()
         print("\n-----------------Union Colors Algorithm-----------------")
         print("Execution time %.2f seconds" % (finish_time-start_time))
         print("Movies recommended: %s" % union_recommendations)
@@ -88,6 +111,7 @@ def graph(index, user_id, category, ratio):
 
         y_actual, y_predicted = evaluation.get_labels(G, U, user_id, hidden_movies, union_recommendations, category)
         accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
+        print("ndcg score: %.4f " % ndcg_score)  
         print("Accuracy: %.4f " % accuracy)
         print("Precision: %.4f " % precision)
         print("Recall: %.4f " % recall)
@@ -112,6 +136,29 @@ def graph(index, user_id, category, ratio):
         M = G.copy()
         start_time = time.time()
         energy_recommendations = EnergySpreading.run(M, initial_movies, len(hidden_movies))
+
+
+        recommended_movies = []
+        for movie in energy_recommendations:
+            if movie in hidden_movies:
+                recommended_movies.append(movie)   
+
+        ground_truth = []
+        for movie in recommended_movies:
+            try:
+                rating = U[user_id][movie]['weight']
+                ground_truth.append([movie, rating])
+            except KeyError:
+                pass
+        ground_truth.sort(key=getKey, reverse=True)
+
+
+        recommended_movies = [int(movies_data.loc[movies_data['title'] == item].iloc[0]['movieID']) for item in  recommended_movies]
+        ground_truth = [int(movies_data.loc[movies_data['title'] == item[0]].iloc[0]['movieID']) for item in  ground_truth]
+        ndcg_score = evaluation.ndcg_metric(ground_truth, recommended_movies)
+
+
+
         finish_time = time.time()
 
         print("\n-----------------Energy Spreading Algorithm-----------------")
@@ -123,6 +170,7 @@ def graph(index, user_id, category, ratio):
 
         y_actual, y_predicted = evaluation.get_labels(G, U, user_id, hidden_movies, energy_recommendations, category)
         accuracy, precision, recall, f1_score, rmse, rms = evaluation.get_metrics(y_actual, y_predicted)
+        print("ndcg score: %.4f " % ndcg_score)       
         print("Accuracy: %.4f " % accuracy)
         print("Precision: %.4f " % precision)
         print("Recall: %.4f " % recall)

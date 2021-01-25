@@ -60,11 +60,10 @@ if __name__ == '__main__':
         val = input("Enter your value: ")
 
         if int(val) == 0:
-            try:
-                data = graph.graph(0, 127, 'Comedy', 2)
+
+                data = graph.graph(0, 1174, 'Comedy', 2)
                 print(data)
-            except:
-                print("error")
+
         elif int(val) == 1:
             try:
                 data = graph.graph(1, 78, 'Comedy', 3)

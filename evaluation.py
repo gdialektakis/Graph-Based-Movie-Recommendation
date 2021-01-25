@@ -1,5 +1,6 @@
 import random
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, ndcg_score
+import numpy as np
 
 
 def confusion_matrix(y_actual, y_predicted):
@@ -23,6 +24,13 @@ def confusion_matrix(y_actual, y_predicted):
             FN += 1
 
     return TP, FP, TN, FN
+
+def ndcg_metric(actual_movies, movies_predicted):
+    # actual_movies = [ 'movie_1', 'movie_2', 'movie_3']
+    # movies_predicted = ['movie_1', 'movie_4', 'movie_5']
+
+    result = ndcg_score(np.asarray([actual_movies]), np.asarray([movies_predicted]))
+    return result
 
 
 def get_metrics(y_actual, y_predicted):
