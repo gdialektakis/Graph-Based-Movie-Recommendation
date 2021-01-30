@@ -25,3 +25,6 @@ Run the main application
 python app.py
 ```
 
+## Visualization
+
+For direct interaction with the recommendation web application you can also visit this [URL](http://160.40.53.168:4201/). Enjoy :)
