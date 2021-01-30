@@ -142,8 +142,8 @@ def graph(index, user_id, category, ratio):
 
         recommended_movies = []
         for movie in energy_recommendations:
-            if movie in hidden_movies:
-                recommended_movies.append(movie)   
+            if movie[0] in hidden_movies:
+                recommended_movies.append(movie[0])
 
         ground_truth = []
         for movie in recommended_movies:
@@ -153,7 +153,6 @@ def graph(index, user_id, category, ratio):
             except KeyError:
                 pass
         ground_truth.sort(key=getKey, reverse=True)
-
 
         recommended_movies = [int(movies_data.loc[movies_data['title'] == item].iloc[0]['movieID']) for item in  recommended_movies]
         ground_truth = [int(movies_data.loc[movies_data['title'] == item[0]].iloc[0]['movieID']) for item in  ground_truth]
