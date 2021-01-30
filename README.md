@@ -1,7 +1,7 @@
 # Graph-Based-Movie-Recommendation
 
 ### Installing
-git clone [http://www.dropwizard.io/1.0.2/docs/](http://www.dropwizard.io/1.0.2/docs/)
+git clone [https://github.com/gdialektakis/Graph-Based-Movie-Recommendation.git](https://github.com/gdialektakis/Graph-Based-Movie-Recommendation.git)
 
 ### Running 
 
