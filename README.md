@@ -8,9 +8,13 @@ First create a fresh new venv enviroment
 ```
 python -m venv venv
 ```
-After that activate the venv (for Windows)
+After that activate the venv (On Windows):
 ```
 .\venv\Scripts\activate
+```
+(On macOS and Linux):
+```
+source env/bin/activate
 ```
 Install all necessary packages
 ```
