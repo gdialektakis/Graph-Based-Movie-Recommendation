@@ -1,8 +1,9 @@
 # Graph-Based-Movie-Recommendation
 
 ### Installing
+```
 git clone [https://github.com/gdialektakis/Graph-Based-Movie-Recommendation.git](https://github.com/gdialektakis/Graph-Based-Movie-Recommendation.git)
-
+```
 ### Running 
 
 First create a fresh new venv enviroment
